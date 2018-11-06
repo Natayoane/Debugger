@@ -2,7 +2,7 @@
 var Database = require('./Database');
 
     setInterval(() => {
-        Database.query(`INSERT INTO leitura (temperatura, umidade, hora) VALUES ('${t()}', '${u()}', NOW())`, (e, r) => {
+        Database.query(`INSERT INTO dados (temperatura, umidade, data_time) VALUES ('${t()}', '${u()}', NOW())`, (e, r) => {
             if (e) {
                 console.error(e);
             }
