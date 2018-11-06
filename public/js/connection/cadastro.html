@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+
+		<input id="login"> <br> <br>
+		<input id="senha"> <br> <br>
+		<button onclick="cadastrar()">Cadastrar</button>
+
+		<script>
+
+			function cadastrar(){
+		
+				var Connection = require('tedious').Connection;
+				var Request = require('tedious').Request;
+
+				var config = {
+				server: 'debuggertec.database.windows.net',
+				userName: 'bandtec',
+				password: '@Bestlab'
+				
+				,options: {
+					debug: {
+					packet: true,
+					data: true,
+					payload: true,
+					token: false,
+					log: true
+					},
+					database: 'PROJETO',
+					encrypt: true // for Azure users
+				}
+				
+				};
+
+				var user = document.getElementById('login').value;
+				var password = document.getElementById('senha').value;
+
+				var connection = new Connection(config);
+
+				connection.on('connect', function(err) {
+					// If no error, then good to go...
+					executeStatement();
+				}
+				);
+
+				connection.on('debug', function(text) {
+					//console.log(text);
+				}
+				);
+
+				function executeStatement() {
+				request = new Request(`insert into teste_cadastro values ('${login}', '${senha}') `, function(err, rowCount) {
+					if (err) {
+					console.log(err);
+					} else {
+					console.log(rowCount + ' rows');
+					}
+
+					connection.close();
+				});
+
+				request.on('row', function(columns) {
+					columns.forEach(function(column) {
+					if (column.value === null) {
+						console.log('NULL');
+					} else {
+						console.log(column.value);
+					}
+					});
+				});
+
+				request.on('done', function(rowCount, more) {
+					console.log(rowCount + ' rows returned');
+				});
+
+				// In SQL Server 2000 you may need: connection.execSqlBatch(request);
+				connection.execSql(request);
+				}
+
+			}
+			
+		</script>
+	
+</body>
+</html>
